@@ -1,8 +1,7 @@
 
 <details>
   <summary>POST /user_account</summary>
-  
-<p>
+
   
 - user_id
 - name
@@ -36,8 +35,7 @@ Response:
     description: Authorization information is missing or invalid.
   '5XX':
     description: Unexpected error.
-  
-</p>
+
   
 </details>
 
