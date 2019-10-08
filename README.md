@@ -47,20 +47,17 @@ PayON is a payment service made for academic project at the University of Aveiro
 
 ### Technologies used
 
-```markdown
 ### Flask
 <p>Link: <a href="https://palletsprojects.com/p/flask/
 " class="issue-link" title="This is a simple issue">Flask</a> </p>
-```
-```markdown
+
 ### Flask-RESTPlus
 <p>Link: <a href="https://flask-restplus.readthedocs.io/en/stable/
 " class="issue-link" title="This is a simple issue">Flask-RESTPlus</a> </p>
-```
-```markdown
-### Swagger UI
 
-```
+### Swagger UI
+<p>Link: <a href="https://swagger.io
+" class="issue-link" title="This is a simple issue">Swagger</a> </p>
 ### API
 
 In PayON service we have following functionalities:
