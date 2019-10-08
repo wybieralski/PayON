@@ -59,9 +59,10 @@ Response:
   '5XX':
     description: Unexpected error.
     
-## collapsible markdown?
 
-<details><summary>POST /user_account</summary>
+<details>
+  <summary>POST /user_account</summary>
+  
 <p>
   
 - user_id
@@ -98,7 +99,9 @@ Response:
     description: Unexpected error.
   
 </p>
+  
 </details>
+    
     
 # Header 1
 ## Header 2
