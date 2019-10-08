@@ -1,15 +1,54 @@
-## Welcome to GitHub Pages
+## PayON - payment service made for academic project at the University of Aveiro
 
-You can use the [editor on GitHub](https://github.com/wybieralski/PayON/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+### API
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+In PayON service we have following functionalities:
+- Creating an account
+- Sending money to our account (top-up)
+- Paying with our account
+- Getting all the transactions
+- Geting all users
 
 ```markdown
-Syntax highlighted code block
+POST /user_account/create
+- user_id
+- name
+- surname
+- date_of_birth
+- balance
+
+Response:
+'200':
+  decription: Account created successfully
+  schema:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+        example: 164
+      user_id:
+        type: integer
+        format: int64
+        readOnly: true
+        example: 164
+      created_at:
+        type: integer
+        format: int64
+        readOnly: true
+        example: 164
+      balance:
+        type: integer
+        format: int64
+        readOnly: true
+        example: 164
+'400':
+  description: Invalid input
+'409'
+  description: User already exists
 
 # Header 1
 ## Header 2
