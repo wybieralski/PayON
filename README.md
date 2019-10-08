@@ -1,3 +1,48 @@
+<p>Hello world <a href="http://github.com/github/linguist/issues/1" class="issue-link" title="This is a simple issue">github/linguist#1</a> <strong>cool</strong>, and <a href="http://github.com/github/gollum/issues/1" class="issue-link" title="This is another issue">#1</a>!</p>
+
+<details>
+  <summary>POST /user_account</summary>
+  
+<p>
+  
+- user_id
+- name
+- surname
+- date_of_birth
+- balance
+Response:
+'200':
+  decription: Account created successfully
+  schema:
+    type: object
+    properties:
+      name:
+        type: string
+        example: Lukasz Wybieralski
+      user_id:
+        type: integer
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      created_at:
+        type: date
+        format: int64
+        example: 164
+      balance:
+        type: float
+        format: int64
+        example: 1644.40
+ '400':
+    description: Bad request. User ID must be an integer and larger than 0.
+ '401':
+    description: Authorization information is missing or invalid.
+  '5XX':
+    description: Unexpected error.
+  
+</p>
+  
+</details>
+
+
 ### Description
 PayON is a payment service made for academic project at the University of Aveiro
 
