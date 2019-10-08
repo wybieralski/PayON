@@ -1,4 +1,3 @@
-<p>Hello world <a href="http://github.com/github/linguist/issues/1" class="issue-link" title="This is a simple issue">github/linguist#1</a> <strong>cool</strong>, and <a href="http://github.com/github/gollum/issues/1" class="issue-link" title="This is another issue">#1</a>!</p>
 
 <details>
   <summary>POST /user_account</summary>
@@ -50,11 +49,13 @@ PayON is a payment service made for academic project at the University of Aveiro
 
 ```markdown
 ### Flask
-
+<p>Link: <a href="https://palletsprojects.com/p/flask/
+" class="issue-link" title="This is a simple issue">Flask</a> </p>
 ```
 ```markdown
 ### Flask-RESTPlus
-
+<p>Link: <a href="https://flask-restplus.readthedocs.io/en/stable/
+" class="issue-link" title="This is a simple issue">Flask-RESTPlus</a> </p>
 ```
 ```markdown
 ### Swagger UI
