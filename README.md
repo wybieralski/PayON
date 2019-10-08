@@ -63,6 +63,7 @@ Response:
 
 <details><summary>POST /user_account</summary>
 <p>
+  
 - user_id
 - name
 - surname
@@ -95,6 +96,7 @@ Response:
     description: Authorization information is missing or invalid.
   '5XX':
     description: Unexpected error.
+  
 </p>
 </details>
     
