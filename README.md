@@ -14,6 +14,7 @@ PayON is a payment service made for academic project at the University of Aveiro
 ### Swagger UI
 <p>Link: <a href="https://swagger.io
 " class="issue-link" title="This is a simple issue">Swagger</a> </p>
+
 ### API
 
 In PayON service we have following functionalities:
