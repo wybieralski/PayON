@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Daniel Martins" name="author"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Account - Payment Service</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet" type="text/css"/>
+<link href="../css/theme.css" rel="stylesheet" type="text/css">
+<link href="../css/theme_extra.css" rel="stylesheet" type="text/css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="https://unpkg.com/mermaid@7.1.2/dist/mermaid.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Account";
+    var mkdocs_page_input_path = "account.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> Payment Service</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1">
+<a class="" href="..">Home</a>
+</li>
+<li class="toctree-l1">
+<span class="caption-text">API Operations</span>
+<ul class="subnav">
+<li class="">
+<a class="" href="../apiOperations/">API</a>
+</li>
+<li class="current">
+<a class="current" href="./">Account</a>
+<ul class="subnav">
+<li class="toctree-l3"><a href="#account">Account</a></li>
+<ul>
+<li><a class="toctree-l4" href="#create-account">Create Account</a></li>
+<li><a class="toctree-l4" href="#add-amount">Add Amount</a></li>
+<li><a class="toctree-l4" href="#activate-account">Activate Account</a></li>
+<li><a class="toctree-l4" href="#desactivate-account">Desactivate Account</a></li>
+<li><a class="toctree-l4" href="#account-information">Account Information</a></li>
+</ul>
+</ul>
+</li>
+<li class="">
+<a class="" href="../payment/">Payment</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1">
+<span class="caption-text">Thoughts and decisions</span>
+<ul class="subnav">
+<li class="">
+<a class="" href="../gunicorn/">Gunicorn</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1">
+<a class="" href="../about/">About</a>
+</li>
+</ul>
+</div>
+       
+    </nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">Payment Service</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>API Operations »</li>
+<li>Account</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p>Page last revised on: 2019-10-14</p>
+<h2 id="account">Account</h2>
+<h4 id="create-account">Create Account</h4>
+<p>This endpoint creates one account. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At the moment of creating an account, an outsourcing already offers a unique identifying ID that identifies the user. You only need to match this ID to an account.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If the external source is a social network, for example, a user can sign in with Facebook or Instagram and this generates 2 different users.</p>
+</div>
+<h5 id="request">Request</h5>
+<pre><code>POST /account
+</code></pre>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">user_id</td>
+<td align="left">the user ID</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">currency</td>
+<td align="left">the account currency</td>
+<td align="center">3-letter ISO currency code</td>
+</tr>
+</tbody>
+</table>
+<h5 id="response">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">id</td>
+<td align="left">the account ID</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">user_id</td>
+<td align="left">the user ID</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">currency</td>
+<td align="left">the account currency</td>
+<td align="center">3-letter ISO currency code</td>
+</tr>
+<tr>
+<td align="center">balance</td>
+<td align="left">the available balance</td>
+<td align="center">Decimal</td>
+</tr>
+<tr>
+<td align="center">state</td>
+<td align="left">the account state, one of <em>active</em>, <em>inactive</em></td>
+<td align="center">Boolean</td>
+</tr>
+<tr>
+<td align="center">created_at</td>
+<td align="left">the instant when the account was created</td>
+<td align="center">ISO date/time</td>
+</tr>
+<tr>
+<td align="center">updated_at</td>
+<td align="left">the instant when the account was last updated</td>
+<td align="center">ISO date/time</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h4 id="add-amount">Add Amount</h4>
+<p><em>This endpoint permits add an amount to an account</em></p>
+<h5 id="request_1">Request</h5>
+<pre><code>POST /account/&lt;id&gt;/amount
+</code></pre>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">amount</td>
+<td align="left">amount to add to account</td>
+<td align="center">Decimal</td>
+</tr>
+</tbody>
+</table>
+<h5 id="response_1">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<p>[General Response]</p>
+<hr/>
+<h4 id="activate-account">Activate Account</h4>
+<p><em>This endpoints activate an account</em></p>
+<h5 id="request_2">Request</h5>
+<pre><code>POST /account/&lt;id&gt;/activate
+</code></pre>
+<h5 id="response_2">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<p>[General Response]</p>
+<hr/>
+<h4 id="desactivate-account">Desactivate Account</h4>
+<p><em>This endpoints desactivate an account</em></p>
+<h5 id="request_3">Request</h5>
+<pre><code>POST /account/&lt;id&gt;/desactivate
+</code></pre>
+<h5 id="response_3">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<p>[General Response]</p>
+<hr/>
+<h4 id="account-information">Account Information</h4>
+<p><em>This endpoint gives information about an account</em></p>
+<h5 id="resquest">Resquest</h5>
+<pre><code>GET /account/&lt;id&gt;
+</code></pre>
+<h5 id="response_4">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">id</td>
+<td align="left">the account ID</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">user_id</td>
+<td align="left">the user ID</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">currency</td>
+<td align="left">the account currency</td>
+<td align="center">3-letter ISO currency code</td>
+</tr>
+<tr>
+<td align="center">balance</td>
+<td align="left">the available balance</td>
+<td align="center">Decimal</td>
+</tr>
+<tr>
+<td align="center">state</td>
+<td align="left">the account state, one of <em>active</em>, <em>inactive</em></td>
+<td align="center">Boolean</td>
+</tr>
+<tr>
+<td align="center">created_at</td>
+<td align="left">the instant when the account was created</td>
+<td align="center">ISO date/time</td>
+</tr>
+<tr>
+<td align="center">updated_at</td>
+<td align="left">the instant when the account was last updated</td>
+<td align="center">ISO date/time</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../payment/" title="Payment">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../apiOperations/" title="API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2019</p>
+</div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div class="rst-versions" role="note" style="cursor: pointer">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="../apiOperations/" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="../payment/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/wavedrom@2.1.2/wavedrom.unpkg.js"></script>
+<script defer="" src="https://wavedrom.com/skins/default.js"></script>
+<script defer="" src="../search/main.js"></script>
+</body>
+</html>

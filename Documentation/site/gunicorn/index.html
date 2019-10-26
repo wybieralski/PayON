@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Daniel Martins" name="author"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Gunicorn - Payment Service</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet" type="text/css"/>
+<link href="../css/theme.css" rel="stylesheet" type="text/css">
+<link href="../css/theme_extra.css" rel="stylesheet" type="text/css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="https://unpkg.com/mermaid@7.1.2/dist/mermaid.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Gunicorn";
+    var mkdocs_page_input_path = "gunicorn.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> Payment Service</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1">
+<a class="" href="..">Home</a>
+</li>
+<li class="toctree-l1">
+<span class="caption-text">API Operations</span>
+<ul class="subnav">
+<li class="">
+<a class="" href="../apiOperations/">API</a>
+</li>
+<li class="">
+<a class="" href="../account/">Account</a>
+</li>
+<li class="">
+<a class="" href="../payment/">Payment</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1">
+<span class="caption-text">Thoughts and decisions</span>
+<ul class="subnav">
+<li class="current">
+<a class="current" href="./">Gunicorn</a>
+<ul class="subnav">
+<li class="toctree-l3"><a href="#why-use-gunicorn-and-nginx">Why use Gunicorn and Nginx?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1">
+<a class="" href="../about/">About</a>
+</li>
+</ul>
+</div>
+       
+    </nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">Payment Service</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>Thoughts and decisions »</li>
+<li>Gunicorn</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p>Page last revised on: 2019-10-14</p>
+<h4 id="why-use-gunicorn-and-nginx">Why use Gunicorn and Nginx?</h4>
+<p>Imagine if you had to do everything yourself with every new web application you build:</p>
+<ul>
+<li>Host static files</li>
+<li>Handle https connections</li>
+<li>Recover from crashes</li>
+<li>Make sure your application can scale up (via framework or your own code)</li>
+</ul>
+<p>That sounds like a lot of work. 
+And a lot of work which is the same across most web applications you might come up with.</p>
+<p><strong>This is good news!</strong> Because those problems are so common, you can build tools which take care of them. You don’t even need to put that functionality into your web framework of choice.</p>
+<p>Three common building blocks when deploying a Python web application to production are:</p>
+<ul>
+<li>A web server (like nginx)</li>
+<li>A WSGI (Web Server Gateway Inteface) application server (like Gunicorn)</li>
+<li>Your actual application (written using a developer-friendly framework like Django)</li>
+</ul>
+<p><img alt="service" src="../img/service.png"/></p>
+<p>The web server <em>accepts requests, takes care of general domain logic and takes care of handling https connections</em>. Only requests which are meant to arrive at the application are passed on toward the application server and the application itself. The application code does not care about anything except being able to process single requests.</p>
+<p>Gunicorn takes care of everything which happens in-between the web server and your web application. This way, when coding up your a Django application you don’t need to find your own solutions for:</p>
+<ul>
+<li>communicating with multiple web servers</li>
+<li>reacting to lots of web requests at once and distributing the load</li>
+<li>keepiung multiple processes of the web application running</li>
+</ul>
+<p>It's a good strategy running our Python Web Application in a WSGI Server. This way, deployment will be more stable, be able to handle more requests at once and be fast about it.</p>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../about/" title="About">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../payment/" title="Payment"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2019</p>
+</div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div class="rst-versions" role="note" style="cursor: pointer">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="../payment/" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="../about/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/wavedrom@2.1.2/wavedrom.unpkg.js"></script>
+<script defer="" src="https://wavedrom.com/skins/default.js"></script>
+<script defer="" src="../search/main.js"></script>
+</body>
+</html>

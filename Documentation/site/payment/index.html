@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Daniel Martins" name="author"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Payment - Payment Service</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet" type="text/css"/>
+<link href="../css/theme.css" rel="stylesheet" type="text/css">
+<link href="../css/theme_extra.css" rel="stylesheet" type="text/css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<link href="https://unpkg.com/mermaid@7.1.2/dist/mermaid.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Payment";
+    var mkdocs_page_input_path = "payment.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> Payment Service</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1">
+<a class="" href="..">Home</a>
+</li>
+<li class="toctree-l1">
+<span class="caption-text">API Operations</span>
+<ul class="subnav">
+<li class="">
+<a class="" href="../apiOperations/">API</a>
+</li>
+<li class="">
+<a class="" href="../account/">Account</a>
+</li>
+<li class="current">
+<a class="current" href="./">Payment</a>
+<ul class="subnav">
+<li class="toctree-l3"><a href="#payment">Payment</a></li>
+<ul>
+<li><a class="toctree-l4" href="#create-payment">Create Payment</a></li>
+<li><a class="toctree-l4" href="#get-payments">Get Payments</a></li>
+<li><a class="toctree-l4" href="#create-transaction">Create Transaction</a></li>
+<li><a class="toctree-l4" href="#cancel-transaction">Cancel Transaction</a></li>
+<li><a class="toctree-l4" href="#execute-the-payment">Execute the payment</a></li>
+<li><a class="toctree-l4" href="#authorization-payment">Authorization payment</a></li>
+<li><a class="toctree-l4" href="#get-transactions">Get transactions</a></li>
+<li><a class="toctree-l4" href="#get-transaction">Get Transaction</a></li>
+</ul>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1">
+<span class="caption-text">Thoughts and decisions</span>
+<ul class="subnav">
+<li class="">
+<a class="" href="../gunicorn/">Gunicorn</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1">
+<a class="" href="../about/">About</a>
+</li>
+</ul>
+</div>
+       
+    </nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">Payment Service</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>API Operations »</li>
+<li>Payment</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p>Page last revised on: 2019-10-14</p>
+<h2 id="payment">Payment</h2>
+<blockquote>
+<p>All incoming and outgoing payments are represented as transactions and are processed in two stages from the user's perspective:</p>
+<ul>
+<li>a new transaction is created.</li>
+<li>the authorization transaction is accepted/declined .</li>
+</ul>
+<p>A new transaction has pending state, and a processed transaction's state can be one of completed, failed, reverted or declined.</p>
+</blockquote>
+<p><img alt="payment" src="../img/createpayment.png"/></p>
+<h4 id="create-payment">Create Payment</h4>
+<p><em>This endpoint creates a new payment.</em></p>
+<h5 id="request">Request</h5>
+<pre><code>POST account/id/payment
+</code></pre>
+<p><strong>Content-Type</strong> : application/json</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>To avoid duplicate payment submission because of an error in your code, <strong>request_id</strong> must be unique for each submitted payment. The <strong>request_id</strong> must be previously persisted on your side.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">request_id</td>
+<td align="left">the client provided ID of the transaction (40 characters max)</td>
+<td align="center">Text</td>
+</tr>
+<tr>
+<td align="center">seller_id</td>
+<td align="left">the ID of the receiving account</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">currency</td>
+<td align="left">the transaction currency</td>
+<td align="center">3-letter ISO currency code</td>
+</tr>
+<tr>
+<td align="center">reference</td>
+<td align="left">an optional textual reference shown on the transaction</td>
+<td align="center">Text</td>
+</tr>
+</tbody>
+</table>
+<h5 id="response">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">id</td>
+<td align="left">the ID of the created payment</td>
+<td align="center">UUID</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h4 id="get-payments">Get Payments</h4>
+<p><em>This endpoint list all payments made by an account.</em></p>
+<h5 id="request_1">Request</h5>
+<pre><code>GET /account/&lt;id&gt;/payments
+</code></pre>
+<h5 id="response_1">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">id</td>
+<td align="left">The payment id</td>
+<td align="center">Text</td>
+</tr>
+<tr>
+<td align="center">request_id</td>
+<td align="left">the client provided ID of the transaction (40 characters max)</td>
+<td align="center">Text</td>
+</tr>
+<tr>
+<td align="center">seller_id</td>
+<td align="left">the ID of the receiving account</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">created_at</td>
+<td align="left">The date when the payment was created</td>
+<td align="center">ISO date/time</td>
+</tr>
+<tr>
+<td align="center">currency</td>
+<td align="left">the transaction currency</td>
+<td align="center">3-letter ISO currency code</td>
+</tr>
+<tr>
+<td align="center">amount</td>
+<td align="left">The value of the payment</td>
+<td align="center">Decimal</td>
+</tr>
+<tr>
+<td align="center">state</td>
+<td align="left">The state of the payment 'pending, completed or cancelled'</td>
+<td align="center">Text</td>
+</tr>
+<tr>
+<td align="center">reference</td>
+<td align="left">an optional textual reference shown on the transaction</td>
+<td align="center">Text</td>
+</tr>
+<tr>
+<td align="center">--------</td>
+<td align="left"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="create-transaction">Create Transaction</h4>
+<p><em>This endpoint creates a transaction associated with a payment</em></p>
+<h5 id="request_2">Request</h5>
+<pre><code>POST /payment/&lt;id&gt;/transactions
+</code></pre>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">amount</td>
+<td align="left">amount to add to account</td>
+<td align="center">Decimal</td>
+</tr>
+<tr>
+<td align="center">reference</td>
+<td align="left">an optional textual reference shown on the transaction</td>
+<td align="center">Text</td>
+</tr>
+</tbody>
+</table>
+<h5 id="response_2">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">id</td>
+<td align="left">the ID of the created transaction</td>
+<td align="center">UUID</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h4 id="cancel-transaction">Cancel Transaction</h4>
+<p><em>This endpoint cancel a transaction associated with a payment</em></p>
+<h5 id="request_3">Request</h5>
+<pre><code>POST /payment/&lt;payment_id&gt;/transactions/&lt;transaction_id&gt;/cancel
+</code></pre>
+<h4 id="execute-the-payment">Execute the payment</h4>
+<p><em>This endpoint</em></p>
+<h5 id="request_4">Request</h5>
+<pre><code>POST /payment/&lt;id&gt;/execute
+</code></pre>
+<h5 id="response_3">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<p>[General Response]</p>
+<hr/>
+<h4 id="authorization-payment">Authorization payment</h4>
+<p><em>This endpoint creates a payment confirmation.</em></p>
+<h5 id="request_5">Request</h5>
+<pre><code>POST /payment/&lt;id&gt;/authorize
+</code></pre>
+<h5 id="response_4">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<p>[General Response]</p>
+<hr/>
+<h4 id="get-transactions">Get transactions</h4>
+<p><em>This endpoint give all the transactions information</em></p>
+<h5 id="request_6">Request</h5>
+<pre><code>GET /payment/&lt;id&gt;/transactions
+</code></pre>
+<h5 id="response_5">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">id</td>
+<td align="left">the ID of the created transaction</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">amount</td>
+<td align="left">The amount of the transaction</td>
+<td align="center">Decimal</td>
+</tr>
+<tr>
+<td align="center">state</td>
+<td align="left">the transaction state: <em>completed</em>, <em>declined</em> or <em>failed</em></td>
+<td align="center">Text</td>
+</tr>
+<tr>
+<td align="center">id_payment</td>
+<td align="left">The id of the payment which the transaction is associated</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">emission_date</td>
+<td align="left">the instant when the transaction was created</td>
+<td align="center">ISO date/time</td>
+</tr>
+<tr>
+<td align="center">update_date</td>
+<td align="left">the instant when the transaction was completed</td>
+<td align="center">ISO date/time</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h4 id="get-transaction">Get Transaction</h4>
+<p><em>This endpoint gives information about a specific transaction</em></p>
+<h5 id="request_7">Request</h5>
+<pre><code>GET /payment/&lt;payment_id&gt;/transactions/&lt;transaction_id&gt;
+</code></pre>
+<h5 id="response_6">Response</h5>
+<p><strong>Content-Type</strong> : application/json</p>
+<table>
+<thead>
+<tr>
+<th align="center">Field</th>
+<th align="left">Description</th>
+<th align="center">Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">id</td>
+<td align="left">the ID of the created transaction</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">amount</td>
+<td align="left">The amount of the transaction</td>
+<td align="center">Decimal</td>
+</tr>
+<tr>
+<td align="center">state</td>
+<td align="left">the transaction state: <em>completed</em>, <em>declined</em> or <em>failed</em></td>
+<td align="center">Text</td>
+</tr>
+<tr>
+<td align="center">id_payment</td>
+<td align="left">The id of the payment which the transaction is associated</td>
+<td align="center">UUID</td>
+</tr>
+<tr>
+<td align="center">emission_date</td>
+<td align="left">the instant when the transaction was created</td>
+<td align="center">ISO date/time</td>
+</tr>
+<tr>
+<td align="center">update_date</td>
+<td align="left">the instant when the transaction was completed</td>
+<td align="center">ISO date/time</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../gunicorn/" title="Gunicorn">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../account/" title="Account"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2019</p>
+</div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div class="rst-versions" role="note" style="cursor: pointer">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="../account/" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="../gunicorn/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/wavedrom@2.1.2/wavedrom.unpkg.js"></script>
+<script defer="" src="https://wavedrom.com/skins/default.js"></script>
+<script defer="" src="../search/main.js"></script>
+</body>
+</html>

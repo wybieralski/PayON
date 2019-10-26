@@ -1,0 +1,36 @@
+site_name: PayON
+site_author: Lukasz Wybieraslki
+copyright: "Copyright &copy; 2019"
+plugins:
+    - markdownwavedrom
+    - git-revision-date
+    - search
+    - pdf-export:
+        verbose: true
+        media_type: print
+        enabled_if_env: ENABLE_PDF_EXPORT
+        combined : true      
+
+nav:
+- Home : index.md
+- API Operations : 
+  - API : apiOperations.md
+  - User : user.md
+  - Payment : payment.md
+  - Transaction : transaction.md
+- Thoughts and decisions : 
+    - Gunicorn : gunicorn.md
+    - Tokens : tokens.md
+- About : about.md
+theme: readthedocs
+
+markdown_extensions:
+  - admonition
+  - pymdownx.superfences
+
+extra_css:
+  - https://unpkg.com/mermaid@7.1.2/dist/mermaid.css
+extra_javascript:
+    - https://cdn.jsdelivr.net/npm/wavedrom@2.1.2/wavedrom.unpkg.js
+    - https://wavedrom.com/skins/default.js
+
