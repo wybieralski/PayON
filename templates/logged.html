@@ -122,11 +122,12 @@ body {
     <p>            Your ID is {{ user_info['id'] }}</p>
     <p>            Your balance is {{ balance }} </p>
   <div class="form">
-<form method="get" action="/top_up">
-      <button>Top-up</button>
-</form>
+    
 <form method="get" action="/pay">
       <button>Pay</button>
+</form>
+<form method="get" action="/top_up">
+      <button>Top-up</button>
 </form>
 <form method="get" action="/transaction">
       <button>Transactions</button>

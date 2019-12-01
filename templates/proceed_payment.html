@@ -2,9 +2,7 @@
 <html lang="en">
 <head>
     <style>
-
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
-
 .login-page {
   width: 360px;
   padding: 8% 0 0;
@@ -118,12 +116,29 @@ body {
     <h1 style="font-size: 100px; text-align: center;"> PayON </h1>
 </div>
 <div class="login-page">
-    <p>            Currently logged in as {{ user_info['name'] }}</p>
-    <p>            Your ID is {{ user_info['id'] }}</p>
-    <p>            Your balance is {{ balance }}</p>
-    <p>            google_auth.MOVIEPRICE is {{ movieprice }}</p>
-    <p>            google_auth.MOVIETITLE is {{ movietitle }}</p>
+  <div class="form">
+
+      <!-- <form action="{{ url_for('top_up')}}" method="post"> -->
+      <form action="#" method="post">
+
+<!--       <input type="text" id = "title" name="title" placeholder="title"/>
+      <input type="number" id = "amount" name="amount" placeholder="amount"/>
+      <input type="number" id = "account_nr" name="account_nr" placeholder="account_nr"/> -->
+
+      <p>Title</p>
+      <p>{{ movietitle}}</p>
+      <p>Price</p>
+      <p>{{ movieprice}}</p>
+      <p>Account</p>
+      <p>{{ account}}</p>
+
+
+      <button type="submit">Pay</button>
+      </form>
+
+  </div>
+
+
 </div>
 </body>
 </html>
-

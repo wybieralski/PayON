@@ -13,6 +13,7 @@ import google_auth
 import google.oauth2.credentials
 import googleapiclient.discovery
 
+
 # Database
 # Connect to Database and create database session
 engine = create_engine('sqlite:///payment_service.db',
@@ -28,7 +29,6 @@ app = flask.Flask(__name__)
 api = Api(app)
 swagger = Swagger(app)
 app.secret_key = os.environ.get("FN_FLASK_SECRET_KEY", default=False)
-
 app.register_blueprint(google_auth.app)
 
 
@@ -60,10 +60,15 @@ def info():
         # request.form['name']
         new_balance = session.query(Accounts).filter_by(email=user_email).one()
         print(new_balance.email)
-        return flask.render_template('info.html', user_info=google_auth.get_user_info(),balance=new_balance.balance)
+        return flask.render_template('info.html', user_info=google_auth.get_user_info(),balance=new_balance.balance,movietitle=google_auth.MOVIETITLE,movieprice=google_auth.MOVIEPRICE)
         # return '<div>You are currently logged in as ' + user_info['given_name'] + '<div><pre>' + json.dumps(user_info, indent=4) + "</pre>"
 
     return flask.render_template('login.html')
+
+
+@app.route('/booking')
+def booking():
+    return flask.render_template('booking.html')
 
 
 
@@ -144,31 +149,59 @@ def top_up():
         if google_auth.is_logged_in():
             return render_template("topup.html",user_info=google_auth.get_user_info())
         else:
-            return flask.render_template('login.html')
+            return flask.render_template('logged.html')
 
 @app.route('/pay', methods=['GET', 'POST'])
 def pay():
     if request.method == 'POST':
-        user_info = google_auth.get_user_info()
-        user_email = str(user_info['email'])
-        amount  = request.form['amount']
-        title  = request.form['title']
-        bank_account  = request.form['account_nr']
-        #decrease balance
-        balance = session.query(Accounts).filter_by(email=user_email).one()
-        new_balance = balance.balance - int(amount)
-        if new_balance<0:
-            return jsonify({"status": "failed","info":"you dont have enough money. Top up your account"})
-        balance.balance = new_balance
-        transaction = Transactions(account_mail=user_email, receiver_bank_account=bank_account,transaction_description=title,amount=amount)
-        session.add(transaction)
-        session.commit()
-        transaction_title = jsonify({"Title":"sometitle"})
-        
-        return jsonify({"status": "works"})
+        if google_auth.MOVIETITLE == "none":
+            user_info = google_auth.get_user_info()
+            user_email = str(user_info['email'])
+            amount  = request.form['amount']
+            title  = request.form['title']
+            bank_account  = request.form['account_nr']
+            #decrease balance
+            balance = session.query(Accounts).filter_by(email=user_email).one()
+            new_balance = balance.balance - int(amount)
+            if new_balance<0:
+                return jsonify({"status": "failed","info":"you dont have enough money. Top up your account"})
+            balance.balance = new_balance
+            transaction = Transactions(account_mail=user_email, receiver_bank_account=bank_account,transaction_description=title,amount=amount)
+            session.add(transaction)
+            session.commit()
+            transaction_title = jsonify({"Title":"sometitle"})
+            new_balance = session.query(Accounts).filter_by(email=user_email).one()
+            # balance = session.query(Accounts).filter_by(email=user_info['email']).one().balance
+            # print(balance)
+            return flask.render_template('logged.html', user_info=google_auth.get_user_info(),balance=new_balance.balance)
+        else:
+            user_info = google_auth.get_user_info()
+            user_email = str(user_info['email'])
+            amount  = google_auth.MOVIEPRICE
+            title  = google_auth.MOVIETITLE
+            if google_auth.MOVIETITLE == "none":
+                return jsonify({"status": "payment unsuccessful"})
+
+            # bank_account  = request.form['account_nr']
+            bank_account  = "12543"
+            #decrease balance
+            balance = session.query(Accounts).filter_by(email=user_email).one()
+            new_balance = balance.balance - int(amount)
+            if new_balance<0:
+                return jsonify({"status": "failed","info":"you dont have enough money. Top up your account"})
+            balance.balance = new_balance
+            transaction = Transactions(account_mail=user_email, receiver_bank_account=google_auth.BANK_ACCOUNT,transaction_description=google_auth.MOVIETITLE,amount=google_auth.MOVIEPRICE)
+            session.add(transaction)
+            session.commit()
+            transaction_title = jsonify({"Title":"sometitle"})
+            return redirect( google_auth.CALLER)
+        # return jsonify({"status": "works"})
     else:
         if google_auth.is_logged_in():
-            return render_template("pay.html",user_info=google_auth.get_user_info())
+            if google_auth.MOVIETITLE == "none":
+                return render_template("pay.html",user_info=google_auth.get_user_info(),movietitle=google_auth.MOVIETITLE, movieprice=google_auth.MOVIEPRICE, account=1245)
+            else:
+                return render_template("proceed_payment.html",user_info=google_auth.get_user_info(),movietitle=google_auth.MOVIETITLE, movieprice=google_auth.MOVIEPRICE, account=1245)
         else:
             return flask.render_template('login.html')
 
@@ -216,26 +249,54 @@ def get_payment():
 
 
 # curl -X GET "http://localhost:8040/api/payment"
-@app.route('/api/payment', methods=['GET'])
+@app.route('/api/payment', methods=['GET','POST'])
 def payment():
-    if request.method == 'GET':
-        token = request.json['token']
-        return jsonify({
-            "status": "GET payment successful",
-            "token": token,
-            "date": "23-10-2019Z15:25",
-            "buyer_id": "232354334ud",
-            "seller_id": "2sd324334ud",
-            "transaction_id": "54213454"}
-        )
     if request.method == 'POST':
-        return jsonify({
-            "status": "POST payment successful",
-            "date": "23-10-2019Z15:25",
-            "buyer_id": "232354334ud",
-            "seller_id": "2sd324334ud",
-            "transaction_id": "54213454"}
-        )
+        flask.render_template('login.html')
+        # user_info = google_auth.get_user_info()
+        # user_email = str(user_info['email'])
+        amount  = request.json['amount']
+        google_auth.MOVIETITLE  = request.json['MOVIETITLE']
+        google_auth.MOVIEPRICE  = request.json['MOVIEPRICE']
+        google_auth.CALLER  = request.json['CALLER']
+
+        print(google_auth.MOVIETITLE)
+        print(google_auth.MOVIEPRICE)
+        return jsonify({"STATUS": "works",
+                        "MOVIETITLE":google_auth.MOVIETITLE,
+                        "MOVIEPRICE":google_auth.MOVIEPRICE,
+                        "CALLER": google_auth.CALLER}
+                        )
+    else:
+        if google_auth.is_logged_in():
+            return render_template("pay.html",user_info=google_auth.get_user_info())
+        else:
+            return flask.render_template('login.html')
+
+ 
+# curl -X GET "http://localhost:8040/api/payment"
+# @app.route('/api/payment', methods=['GET','POST'])
+# def payment():
+#     if request.method == 'GET':
+#         amount = request.json['amount']
+#         return jsonify({
+#             "status": "GET payment successful",
+#             "AMOUNT": amount,
+#             "date": "23-10-2019Z15:25",
+#             "buyer_id": "232354334ud",
+#             "seller_id": "2sd324334ud",
+#             "transaction_id": "54213454"}
+#         )
+#     if request.method == 'POST':
+#         amount = request.json['amount']
+#         return jsonify({
+#             "status": "POST payment successful",
+#             "AMOUNT": amount,
+#             "date": "23-10-2019Z15:25",
+#             "buyer_id": "232354334ud",
+#             "seller_id": "2sd324334ud",
+#             "transaction_id": "54213454"}
+#         )
 
     # return jsonify({"buyer_id": "sample",
     #                 "transaciton_id": "sample",
@@ -313,3 +374,32 @@ def create_account(user_info):
         print("ACCOUNT SUCCESFULLY CREATED")
     except:
         print("ERROR:ACCOUNT NOT CREATED")
+
+
+# @app.route('/payment',methods=['GET','POST'])
+# def payment():
+#     if request.method == 'POST':
+#         # url = "http://localhost:8040/payment"
+#         url = "http://localhost:8040/api/payment"
+#         data = {
+#             #         "amount": request.form['amount'],
+#             # "MOVIETITLE": request.form['MOVIETITLE'],
+#             # "MOVIEPRICE": request.form['MOVIEPRICE']
+#             # "amount": request.form['amount'],
+#             "amount":"50",
+#             "MOVIETITLE": "movtit",
+#             "MOVIEPRICE": "30"
+#         }
+#         # data = {"eventType": "AAS_PORTAL_START", "data": {"uid": "hfe3hf45huf33545", "aid": "1", "vid": "1"}}
+#         # requests.post(url, params=params)
+#         # requests.post(url, params=params)
+#         # requests.get(url, params=params)
+
+#         data = requests.post(url,json=data)
+#         print(data.text)
+#         print(data)
+#         return redirect("http://localhost:8040")
+#     else:
+#         data = requests.get("http://localhost:8040/api/payment")
+#         print(data.text)
+#         return render_template("payment.html")

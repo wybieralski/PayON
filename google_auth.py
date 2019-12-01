@@ -22,6 +22,12 @@ AUTH_STATE_KEY = 'auth_state'
 
 app = flask.Blueprint('google_auth', __name__)
 
+MOVIETITLE = "none"
+MOVIEPRICE = "none"
+CALLER = "none"
+BANK_ACCOUNT = 1
+
+
 
 def is_logged_in():
     return True if AUTH_TOKEN_KEY in flask.session else False
